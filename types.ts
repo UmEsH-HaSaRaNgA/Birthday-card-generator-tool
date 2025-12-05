@@ -1,3 +1,4 @@
+
 export interface Decorations {
   showBalloons: boolean;
   showCake: boolean;
@@ -16,5 +17,6 @@ export interface CardData {
   batch: string;
   department: string;
   imageUrl: string;
+  backgroundImageUrl: string;
   decorations: Decorations;
 }

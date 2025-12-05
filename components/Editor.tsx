@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { CardData } from '../types';
 
@@ -5,6 +6,7 @@ interface EditorProps {
   cardData: CardData;
   onTextChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBackgroundImageChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const PhotoIcon: React.FC = () => (
@@ -13,7 +15,7 @@ const PhotoIcon: React.FC = () => (
   </svg>
 );
 
-const Editor: React.FC<EditorProps> = ({ cardData, onTextChange, onImageChange }) => {
+const Editor: React.FC<EditorProps> = ({ cardData, onTextChange, onImageChange, onBackgroundImageChange }) => {
 
   const inputFields = [
     { label: "Greeting Text", name: "greeting", value: cardData.greeting },
@@ -34,11 +36,11 @@ const Editor: React.FC<EditorProps> = ({ cardData, onTextChange, onImageChange }
           
           <div>
             <label htmlFor="image-upload" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Upload Photo
+              Profile Photo
             </label>
             <label htmlFor="image-upload" className="mt-1 flex justify-center items-center w-full px-6 py-3 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-md cursor-pointer hover:border-indigo-500 dark:hover:border-indigo-400 transition-colors">
                 <PhotoIcon />
-                <span className="text-sm text-gray-600 dark:text-gray-400">Click to replace image</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Replace Profile Photo</span>
             </label>
             <input 
                 id="image-upload" 
@@ -49,6 +51,26 @@ const Editor: React.FC<EditorProps> = ({ cardData, onTextChange, onImageChange }
                 onChange={onImageChange}
             />
           </div>
+
+          {onBackgroundImageChange && (
+            <div>
+              <label htmlFor="bg-image-upload" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Background Image
+              </label>
+              <label htmlFor="bg-image-upload" className="mt-1 flex justify-center items-center w-full px-6 py-3 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-md cursor-pointer hover:border-indigo-500 dark:hover:border-indigo-400 transition-colors">
+                  <PhotoIcon />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Replace Background</span>
+              </label>
+              <input 
+                  id="bg-image-upload" 
+                  name="bg-image-upload" 
+                  type="file" 
+                  className="sr-only"
+                  accept="image/*"
+                  onChange={onBackgroundImageChange}
+              />
+            </div>
+          )}
 
           <div className="space-y-4">
             {inputFields.map(field => (

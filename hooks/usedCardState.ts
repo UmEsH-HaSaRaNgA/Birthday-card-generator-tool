@@ -13,6 +13,7 @@ const initialCardData: CardData = {
   batch: '24/25 BATCH',
   department: 'DEPARTMENT OF MULTIMEDIA AND WEB TECHNOLOGY',
   imageUrl: 'https://i.imgur.com/lO33p72.png', // Default image
+  backgroundImageUrl: 'https://raw.githubusercontent.com/UmEsH-HaSaRaNgA/birthday-card-generator/main/my-background.jpg',
   decorations: {
     showBalloons: true,
     showCake: true,

@@ -1,3 +1,4 @@
+
 import React, { useRef, useState } from 'react';
 import BirthdayCard from './components/BirthdayCard';
 import Editor from './components/Editor';
@@ -21,7 +22,7 @@ const LoadingIcon: React.FC = () => (
 
 
 export default function App() {
-  const { cardData, handleTextChange, handleImageChange } = useCardState();
+  const { cardData, handleTextChange, handleImageChange, handleBackgroundImageChange } = useCardState();
   const cardRef = useRef<HTMLDivElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -34,14 +35,54 @@ export default function App() {
     setIsDownloading(true);
 
     try {
-      // Small delay to allow React to render any state changes if needed
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // 1. Wait for fonts to be ready
+      await document.fonts.ready;
+
+      // 2. Pre-process images to DataURLs to bypass CORS issues in html2canvas
+      // This is the most reliable way to ensure remote images (like github backgrounds) render.
+      const images = Array.from(cardRef.current.querySelectorAll('img'));
+      const originalSrcs = images.map(img => img.src);
+
+      // Helper to fetch and convert to base64
+      const getBase64Image = async (url: string) => {
+        try {
+           const response = await fetch(url, { mode: 'cors' });
+           const blob = await response.blob();
+           return new Promise<string>((resolve, reject) => {
+             const reader = new FileReader();
+             reader.onloadend = () => resolve(reader.result as string);
+             reader.onerror = reject;
+             reader.readAsDataURL(blob);
+           });
+        } catch (e) {
+          console.warn("Failed to load image via fetch, keeping original:", url);
+          return url; // Fallback to original if fetch fails (e.g. strict CORS)
+        }
+      };
+
+      // Swap sources
+      await Promise.all(images.map(async (img) => {
+        // Only attempt to proxy if it's not already a data URL or blob
+        if (img.src.startsWith('http')) {
+            const newSrc = await getBase64Image(img.src);
+            img.src = newSrc;
+        }
+      }));
+
+      // Small delay to allow React/DOM to update with new sources
+      await new Promise(resolve => setTimeout(resolve, 200));
 
       const canvas = await html2canvas(cardRef.current, {
         useCORS: true,
         scale: 2, // for better resolution
         backgroundColor: null,
       });
+
+      // 3. Restore original image sources immediately
+      images.forEach((img, i) => {
+        img.src = originalSrcs[i];
+      });
+
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = dataUrl;
@@ -94,11 +135,12 @@ export default function App() {
             <Editor 
               cardData={cardData} 
               onTextChange={handleTextChange} 
-              onImageChange={handleImageChange} 
+              onImageChange={handleImageChange}
+              onBackgroundImageChange={handleBackgroundImageChange}
             />
           </div>
           <div className="lg:col-span-2 flex items-center justify-center">
-             <div className="w-full max-w-lg aspect-[3/4] shadow-2xl rounded-lg overflow-hidden">
+             <div className="w-full max-w-lg aspect-[3/4] shadow-2xl rounded-lg overflow-hidden bg-transparent">
                 <BirthdayCard ref={cardRef} {...cardData} />
              </div>
           </div>
