@@ -12,8 +12,8 @@ const initialCardData: CardData = {
   cheers: 'Cheers on Your Day',
   batch: '24/25 BATCH',
   department: 'DEPARTMENT OF MULTIMEDIA AND WEB TECHNOLOGY',
-  imageUrl: 'https://i.imgur.com/lO33p72.png', // Default profile image
-  backgroundImageUrl: 'https://raw.githubusercontent.com/UmEsH-HaSaRaNgA/birthday-card-generator/main/my-background.jpg', // Default background
+  imageUrl: 'https://raw.githubusercontent.com/UmEsH-HaSaRaNgA/Birthday-card-generator-tool/main/public/user.jpg', // Default profile image
+  backgroundImageUrl: 'https://raw.githubusercontent.com/UmEsH-HaSaRaNgA/Birthday-card-generator-tool/main/public/my-background.jpg', // Default background
   decorations: {
     showBalloons: true,
     showCake: true,
